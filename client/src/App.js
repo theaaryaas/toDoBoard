@@ -1,16 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/Dashboard';
 import './App.css';
-
-// Configure axios base URL
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {

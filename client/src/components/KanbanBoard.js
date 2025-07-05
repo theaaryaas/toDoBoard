@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import KanbanColumn from './KanbanColumn';
 import CreateTaskModal from './CreateTaskModal';
 import ConflictResolutionModal from './ConflictResolutionModal';
-import axios from 'axios';
+import api from '../config/axios';
 import toast from 'react-hot-toast';
 import './KanbanBoard.css';
 import TaskCard from './TaskCard';
@@ -114,7 +115,7 @@ const KanbanBoard = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('/api/tasks');
+      const response = await api.get('/tasks');
       console.log('Fetched tasks:', response.data.tasks);
       setTasks(response.data.tasks);
     } catch (error) {
@@ -127,7 +128,7 @@ const KanbanBoard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/api/auth/users');
+      const response = await api.get('/auth/users');
       setUsers(response.data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -136,7 +137,7 @@ const KanbanBoard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/tasks/stats');
+      const response = await api.get('/tasks/stats');
       setStats(response.data.stats);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -159,7 +160,7 @@ const KanbanBoard = () => {
   // Smart assign handler
   const handleSmartAssign = useCallback(async (taskId) => {
     try {
-      const response = await axios.post(`/api/tasks/${taskId}/smart-assign`);
+      const response = await api.post(`/tasks/${taskId}/smart-assign`);
       setTasks(prev => prev.map(task => 
         task._id === taskId ? response.data.task : task
       ));
@@ -175,7 +176,7 @@ const KanbanBoard = () => {
     console.log('KanbanBoard: handleMoveTask called with:', { taskId, newStatus });
     try {
       console.log('KanbanBoard: Making API call to move task...');
-      const response = await axios.patch(`/api/tasks/${taskId}/move`, {
+      const response = await api.patch(`/tasks/${taskId}/move`, {
         status: newStatus
       });
       console.log('KanbanBoard: Move task API response:', response.data);
@@ -192,7 +193,7 @@ const KanbanBoard = () => {
 
   const handleCreateTask = async (taskData) => {
     try {
-      await axios.post('/api/tasks', taskData);
+      await api.post('/tasks', taskData);
       // Don't update local state here - let the socket event handle it
       setShowCreateModal(false);
       // Don't show success toast here - let the socket event handle it
@@ -204,7 +205,7 @@ const KanbanBoard = () => {
 
   const handleResolveConflict = async (resolution) => {
     try {
-      const response = await axios.post(`/api/tasks/${conflictData.taskId}/resolve-conflict`, resolution);
+      const response = await api.post(`/tasks/${conflictData.taskId}/resolve-conflict`, resolution);
       setTasks(prev => prev.map(task => 
         task._id === conflictData.taskId ? response.data.task : task
       ));

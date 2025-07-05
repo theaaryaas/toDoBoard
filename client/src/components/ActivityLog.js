@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import axios from 'axios';
+import api from '../config/axios';
 import { useSocket } from '../contexts/SocketContext';
 import './ActivityLog.css';
 
@@ -34,7 +34,7 @@ const ActivityLog = () => {
 
   const fetchActions = async () => {
     try {
-      const response = await axios.get('/api/actions/recent?limit=20');
+      const response = await api.get('/actions/recent?limit=20');
       setActions(response.data.actions);
     } catch (error) {
       console.error('Error fetching actions:', error);

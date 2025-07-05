@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import axios from 'axios';
+import api from '../config/axios';
+import { useAuth } from '../contexts/AuthContext';
+import { useSocket } from '../contexts/SocketContext';
 import toast from 'react-hot-toast';
 import './TaskCard.css';
 
@@ -35,7 +37,7 @@ const TaskCard = ({ task, index, users, onUpdate, onSmartAssign, onMoveTask }) =
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(`/api/tasks/${task._id}`, {
+      const response = await api.put(`/tasks/${task._id}`, {
         ...editData,
         version: task.version
       });
@@ -67,7 +69,7 @@ const TaskCard = ({ task, index, users, onUpdate, onSmartAssign, onMoveTask }) =
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     
     try {
-      await axios.delete(`/api/tasks/${task._id}`);
+      await api.delete(`/tasks/${task._id}`);
       onUpdate(task._id, null); // Signal deletion
       toast.success('Task deleted successfully!');
     } catch (error) {

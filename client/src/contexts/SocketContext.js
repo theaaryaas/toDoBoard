@@ -20,7 +20,9 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     console.log('SocketContext: useEffect triggered', { isAuthenticated, user });
-    const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
+    const serverUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://todoboard-production.up.railway.app' 
+      : 'http://localhost:5000';
     const newSocket = io(serverUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true
