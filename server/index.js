@@ -14,10 +14,25 @@ const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
+
+// CORS configuration for production
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://todoboard-frontend.vercel.app',
+  'https://todoboard.vercel.app',
+  'https://todoboard-git-main.vercel.app'
+];
+
+// Add custom domain if provided
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -27,7 +42,16 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

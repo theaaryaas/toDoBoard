@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Set base URL for API calls
-const baseURL = 'http://localhost:5000';
+const baseURL = process.env.NODE_ENV === 'production' 
+  ? 'https://todoboard-backend.onrender.com' 
+  : 'http://localhost:5000';
 
 // Create axios instance with base URL
 const api = axios.create({

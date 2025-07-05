@@ -20,7 +20,9 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     console.log('SocketContext: useEffect triggered', { isAuthenticated, user });
-    const serverUrl = 'http://localhost:5000';
+    const serverUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://todoboard-backend.onrender.com' 
+      : 'http://localhost:5000';
     const newSocket = io(serverUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true
