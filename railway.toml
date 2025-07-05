@@ -1,0 +1,20 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[[services]]
+name = "backend"
+sourceDir = "server"
+startCommand = "npm start"
+
+[[services]]
+name = "frontend"
+sourceDir = "client"
+startCommand = "npm start"
+buildCommand = "npm run build" 
