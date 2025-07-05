@@ -34,7 +34,7 @@ const ActivityLog = () => {
 
   const fetchActions = async () => {
     try {
-      const response = await api.get('/actions/recent?limit=20');
+      const response = await api.get('/api/actions/recent?limit=20');
       setActions(response.data.actions);
     } catch (error) {
       console.error('Error fetching actions:', error);

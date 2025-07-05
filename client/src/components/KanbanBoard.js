@@ -115,7 +115,7 @@ const KanbanBoard = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await api.get('/tasks');
+      const response = await api.get('/api/tasks');
       console.log('Fetched tasks:', response.data.tasks);
       setTasks(response.data.tasks);
     } catch (error) {
@@ -128,7 +128,7 @@ const KanbanBoard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get('/auth/users');
+      const response = await api.get('/api/auth/users');
       setUsers(response.data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -137,7 +137,7 @@ const KanbanBoard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/tasks/stats');
+      const response = await api.get('/api/tasks/stats');
       setStats(response.data.stats);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -160,7 +160,7 @@ const KanbanBoard = () => {
   // Smart assign handler
   const handleSmartAssign = useCallback(async (taskId) => {
     try {
-      const response = await api.post(`/tasks/${taskId}/smart-assign`);
+      const response = await api.post(`/api/tasks/${taskId}/smart-assign`);
       setTasks(prev => prev.map(task => 
         task._id === taskId ? response.data.task : task
       ));
@@ -176,7 +176,7 @@ const KanbanBoard = () => {
     console.log('KanbanBoard: handleMoveTask called with:', { taskId, newStatus });
     try {
       console.log('KanbanBoard: Making API call to move task...');
-      const response = await api.patch(`/tasks/${taskId}/move`, {
+      const response = await api.patch(`/api/tasks/${taskId}/move`, {
         status: newStatus
       });
       console.log('KanbanBoard: Move task API response:', response.data);
@@ -193,7 +193,7 @@ const KanbanBoard = () => {
 
   const handleCreateTask = async (taskData) => {
     try {
-      await api.post('/tasks', taskData);
+      await api.post('/api/tasks', taskData);
       // Don't update local state here - let the socket event handle it
       setShowCreateModal(false);
       // Don't show success toast here - let the socket event handle it
@@ -205,7 +205,7 @@ const KanbanBoard = () => {
 
   const handleResolveConflict = async (resolution) => {
     try {
-      const response = await api.post(`/tasks/${conflictData.taskId}/resolve-conflict`, resolution);
+      const response = await api.post(`/api/tasks/${conflictData.taskId}/resolve-conflict`, resolution);
       setTasks(prev => prev.map(task => 
         task._id === conflictData.taskId ? response.data.task : task
       ));

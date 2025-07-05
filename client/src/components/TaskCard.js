@@ -37,7 +37,7 @@ const TaskCard = ({ task, index, users, onUpdate, onSmartAssign, onMoveTask }) =
 
   const handleSave = async () => {
     try {
-      const response = await api.put(`/tasks/${task._id}`, {
+      const response = await api.put(`/api/tasks/${task._id}`, {
         ...editData,
         version: task.version
       });
@@ -47,11 +47,11 @@ const TaskCard = ({ task, index, users, onUpdate, onSmartAssign, onMoveTask }) =
       toast.success('Task updated successfully!');
     } catch (error) {
       console.error('Error updating task:', error);
-      if (error.response?.data?.conflict) {
-        // Handle conflict - this will be handled by the conflict resolution modal
-        return;
+      if (error.response?.status === 409) {
+        toast.error('Conflict detected. Please refresh and try again.');
+      } else {
+        toast.error('Failed to update task');
       }
-      toast.error('Failed to update task');
     }
   };
 
@@ -69,7 +69,7 @@ const TaskCard = ({ task, index, users, onUpdate, onSmartAssign, onMoveTask }) =
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     
     try {
-      await api.delete(`/tasks/${task._id}`);
+      await api.delete(`/api/tasks/${task._id}`);
       onUpdate(task._id, null); // Signal deletion
       toast.success('Task deleted successfully!');
     } catch (error) {
